@@ -1,4 +1,8 @@
 from math import sqrt
+import cv2  # opencv
+
+
+# there we find finger endpoint
 def fingertips(image, HandLandmark, FingerStart):
     hand = list()
     if len(HandLandmark) == 21:  # only
@@ -9,6 +13,9 @@ def fingertips(image, HandLandmark, FingerStart):
         return hand
     else:
         return hand
+
+
+# endpoint helper
 def fingertipsTwo(image, HandLandmark, FingerStart):
     Two_Hand = list()
     x, y = FingerStart[0]
@@ -69,10 +76,9 @@ def findPoint(image, x, y, x1, y1, position):
         elif y - y1 == 0 and x > x1:
             return x + 10, y
         elif x - x1 == 0:
-
             return x, y + 10
         else:
-            plus_x, plus_y = 1,2
+            plus_x, plus_y = increase(x, y, x1, y1)
             check = True
             count = 0
             while check:
@@ -116,3 +122,51 @@ def findPoint(image, x, y, x1, y1, position):
         else:
             return x, y - 6
 
+def increase(x, y, x1, y1):
+
+    x2 = x - x1
+    y2 = y - y1
+    return check_increase(x2, y2)
+
+def check_increase(plus_x, plus_y):
+    if plus_y > 2:
+        while plus_y > 2:
+            plus_y = plus_y / 2
+            plus_x = plus_x / 2
+    elif plus_y < -2:
+        while plus_y < -2:
+            plus_y = plus_y / 2
+            plus_x = plus_x / 2
+    if plus_x > 2:
+        while plus_x > 2:
+            plus_y = plus_y / 2
+            plus_x = plus_x / 2
+    elif plus_x < -2:
+        while plus_x < -2:
+            plus_y = plus_y / 2
+            plus_x = plus_x / 2
+    return [plus_x, plus_y]
+def increase_look(x, y, x1, y1):
+
+    x2 = x1 - x
+    y2 = y1 - y
+    if x2 == 0:
+        return [1, 0]
+    elif y2 == 0:
+        return [0, 1]
+    elif y2 / x2 < 0:
+        if x2 > y2:
+            r_x = 1
+            r_y = -1 * (x2 / y2)
+        else:
+            r_x = y2 / x2
+            r_y = -1
+        return check_increase(r_x, r_y)
+    else:
+        if x2 > y2:
+            r_x = -1
+            r_y = x2 / y2
+        else:
+            r_x = -1 * (y2 / x2)
+            r_y = 1
+        return check_increase(r_x, r_y)
